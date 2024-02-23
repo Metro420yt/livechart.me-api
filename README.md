@@ -25,6 +25,8 @@ Here you can find the list of endpoints that the livechart.me rest api has. This
 > 
 -   [user_profile](api/USER_PROFILE.md)
 -   [user](api/USER.md)
+#### OpenAPI
+-   [OpenAPI](openapi/OPENAPI.md)
 
 ### GraphQL
 -   [GraphQL](graphql/GRAPHQL.md)
