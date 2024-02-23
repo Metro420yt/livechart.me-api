@@ -12,8 +12,8 @@ ___
 
 #### POTENTIAL ARGUMENTS:
 ```http
-offset: 0,
-limit: 0
+offset: 0
+limit: 0 (max: 500)
 ```
 
 ___

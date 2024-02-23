@@ -12,12 +12,11 @@ ___
 
 #### POTENTIAL ARGUMENTS:
 ```http
-fields[]: next_episode,
+fields[]: next_episode | tags | studios,
 category: tv | movies | ovas | all,
 offset: 0,
 limit: 0,
 sort: title | airdate | popularity | modified | countdown | anime.avg_rating,
-titles: romaji | english,
 leftovers: true | false,
 hide_skipping: true | false
 ```
