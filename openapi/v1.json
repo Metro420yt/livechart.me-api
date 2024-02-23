@@ -1,0 +1,1860 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Livechart.me API",
+        "description": "unofficial documentation of the \"secret\" livechart api\n\n[github repo](https://github.com/infanf/livechart.me-rest-api)",
+        "version": "1",
+        "x-description": "unofficial documentation of the \"secret\" livechart api",
+        "x-keywords": [
+            "livechart.me",
+            "livechart.me api"
+        ]
+    },
+    "servers": [
+        {
+            "url": "https://www.livechart.me/api/v1"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "in": "header",
+                "name": "Authorization",
+                "type": "apiKey"
+            }
+        },
+        "responses": {
+            "unauthorized": {
+                "description": "Unauthorized / token not provided",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "example": "UnauthorizedError"
+                                },
+                                "error_message": {
+                                    "type": "string",
+                                    "example": "Authentication required"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "invalidId": {
+                "description": "provided id is invalid",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "example": "invalid id"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "idLike": {
+                "name": "id",
+                "required": true,
+                "in": "path",
+                "schema": {
+                    "pattern": "[0-9]+"
+                }
+            },
+            "idOrSlug": {
+                "name": "idOrSlug",
+                "required": true,
+                "in": "path",
+                "schema": {
+                    "oneOf": [
+                        {
+                            "pattern": "[0-9]+"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "aggrLimit": {
+                "name": "limit",
+                "in": "query",
+                "schema": {
+                    "type": "number",
+                    "maximum": 500
+                }
+            },
+            "aggrOffset": {
+                "name": "offset",
+                "in": "query",
+                "schema": {
+                    "type": "number"
+                }
+            }
+        },
+        "schemas": {
+            "authResponse": {
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "format": "token"
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "enum": [
+                            "Bearer"
+                        ]
+                    },
+                    "expires_in": {
+                        "description": "Number of seconds until #access_token is invalid",
+                        "type": "number"
+                    },
+                    "refresh_token": {
+                        "type": "string",
+                        "format": "token"
+                    }
+                }
+            },
+            "anime": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/baseAnime"
+                    },
+                    {
+                        "properties": {
+                            "tags": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/tag"
+                                }
+                            },
+                            "studios": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/studio"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "animeNextEpisode": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "number": {
+                        "type": "number"
+                    },
+                    "airdate": {
+                        "type": "string"
+                    },
+                    "episode_type": {
+                        "type": "number"
+                    },
+                    "anime_id": {
+                        "type": "number"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "episode_code": {
+                        "type": "string",
+                        "description": "Shown in livechart countdowns<br>`{episode_type}{number}`"
+                    }
+                }
+            },
+            "baseAnime": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "romaji_title": {
+                        "type": "string"
+                    },
+                    "english_title": {
+                        "type": "string"
+                    },
+                    "native_title": {
+                        "type": "string"
+                    },
+                    "alternate_titles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "synopsis": {
+                        "type": "string"
+                    },
+                    "synopsis_source": {
+                        "type": "string"
+                    },
+                    "synopsis_source_url": {
+                        "type": "string"
+                    },
+                    "synopsis_emended": {
+                        "type": "boolean"
+                    },
+                    "source_material_id": {
+                        "type": "number"
+                    },
+                    "editor_note": {
+                        "type": "string"
+                    },
+                    "premiere_date": {
+                        "type": "string"
+                    },
+                    "premiere_date_precision": {
+                        "type": "number"
+                    },
+                    "episode_count": {
+                        "type": "number",
+                        "nullable": true
+                    },
+                    "anidb_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "mal_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "ann_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "anisearch_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "anilist_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "kitsu_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "anime_planet_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "twitter_url": {
+                        "type": "string"
+                    },
+                    "twitter_username": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "promo_video_url": {
+                        "type": "string"
+                    },
+                    "website_domain": {
+                        "type": "string"
+                    },
+                    "has_streams": {
+                        "type": "boolean"
+                    },
+                    "has_videos": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "avg_rating_tier": {
+                        "type": "number"
+                    },
+                    "rating_count": {
+                        "type": "number"
+                    },
+                    "poster": {
+                        "$ref": "#/components/schemas/image"
+                    },
+                    "episode_duration": {
+                        "type": "number"
+                    },
+                    "anime_type": {
+                        "type": "number"
+                    },
+                    "anime_type_id": {
+                        "type": "number"
+                    },
+                    "premiere_date_precision_id": {
+                        "type": "number"
+                    },
+                    "poster_image": {
+                        "type": "string"
+                    },
+                    "poster_image_large": {
+                        "type": "string"
+                    },
+                    "source_material": {
+                        "$ref": "#/components/schemas/source"
+                    },
+                    "website_url": {
+                        "type": "string"
+                    },
+                    "avg_rating": {
+                        "type": "number"
+                    },
+                    "episode_duration_iso8601": {
+                        "type": "string"
+                    }
+                }
+            },
+            "image": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "url_template": {
+                        "type": "string"
+                    },
+                    "cache_namespace": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "style_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "small",
+                                "large"
+                            ]
+                        }
+                    },
+                    "styles": {
+                        "type": "object",
+                        "properties": {
+                            "small": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "width": {
+                                        "type": "number"
+                                    },
+                                    "height": {
+                                        "type": "number"
+                                    },
+                                    "formats": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "jpg",
+                                                "webp",
+                                                "png"
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "large": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "width": {
+                                        "type": "number"
+                                    },
+                                    "height": {
+                                        "type": "number"
+                                    },
+                                    "formats": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "jpg",
+                                                "webp",
+                                                "png"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "logo": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/image"
+                    },
+                    {
+                        "properties": {
+                            "style_names": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": [
+                                        "medium"
+                                    ]
+                                }
+                            },
+                            "styles": {
+                                "type": "object",
+                                "properties": {
+                                    "medium": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "width": {
+                                                "type": "number"
+                                            },
+                                            "height": {
+                                                "type": "number"
+                                            },
+                                            "formats": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "jpg",
+                                                        "webp",
+                                                        "png"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "tag": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "hidden": {
+                        "type": "boolean"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "source": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "studio": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "twitter_username": {
+                        "type": "string"
+                    },
+                    "website_url": {
+                        "type": "string"
+                    },
+                    "website_label": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "facebook_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "youtube_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "mal_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "anidb_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "ann_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "anisearch_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "anime_planet_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "twitter_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "founded_date": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "founded_date_precision": {
+                        "type": "number"
+                    },
+                    "founded_date_precision_id": {
+                        "type": "number"
+                    },
+                    "defunct_date": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "defunct_date_precision": {
+                        "type": "number"
+                    },
+                    "defunct_date_precision_id": {
+                        "type": "number"
+                    },
+                    "logo": {
+                        "$ref": "#/components/schemas/logo"
+                    },
+                    "logo_small": {
+                        "type": "string"
+                    },
+                    "logo_large": {
+                        "type": "string"
+                    }
+                }
+            },
+            "headline": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "sub_title": {
+                        "type": "string"
+                    },
+                    "target_url": {
+                        "type": "string"
+                    },
+                    "emphasize": {
+                        "type": "boolean"
+                    },
+                    "sponsored": {
+                        "type": "boolean"
+                    },
+                    "target_host": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "edited": {
+                        "type": "boolean"
+                    },
+                    "pinned": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "*only seen null*"
+                    },
+                    "thumbnail": {
+                        "type": "object",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/image"
+                            },
+                            {
+                                "properties": {
+                                    "style_names": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "social"
+                                            ]
+                                        }
+                                    },
+                                    "styles": {
+                                        "type": "object",
+                                        "properties": {
+                                            "social": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "width": {
+                                                        "type": "number"
+                                                    },
+                                                    "height": {
+                                                        "type": "number"
+                                                    },
+                                                    "formats": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "jpg",
+                                                                "webp",
+                                                                "png"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "thumbnail_small": {
+                        "type": "string"
+                    },
+                    "thumbnail_large": {
+                        "type": "string"
+                    }
+                }
+            },
+            "chartInfo": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "quarter": {
+                        "type": "number"
+                    },
+                    "year": {
+                        "type": "number"
+                    },
+                    "slug": {
+                        "type": "string"
+                    },
+                    "start_date": {
+                        "type": "string"
+                    },
+                    "end_date": {
+                        "type": "string"
+                    },
+                    "next_chart_slug": {
+                        "type": "string"
+                    },
+                    "previous_chart_slug": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "season": {
+                        "type": "string"
+                    }
+                }
+            },
+            "chart": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "leftover": {
+                        "type": "boolean"
+                    },
+                    "anime_id": {
+                        "type": "number"
+                    },
+                    "chart_id": {
+                        "type": "number"
+                    },
+                    "premiere_date": {
+                        "type": "string"
+                    },
+                    "premiere_date_precision": {
+                        "type": "number"
+                    },
+                    "editor_note": {
+                        "type": "string"
+                    },
+                    "premiere_date_precision_id": {
+                        "type": "number"
+                    },
+                    "anime": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/baseAnime"
+                            },
+                            {
+                                "properties": {
+                                    "tags": {
+                                        "description": "added when \"tags\"included in fields[]",
+                                        "type": "array",
+                                        "items": {
+                                            "$ref": "#/components/schemas/tag"
+                                        }
+                                    },
+                                    "studios": {
+                                        "description": "added when \"studios\"included in fields[]",
+                                        "type": "array",
+                                        "items": {
+                                            "$ref": "#/components/schemas/studio"
+                                        }
+                                    },
+                                    "next_episode": {
+                                        "description": "added when \"next_episode\"included in fields[]",
+                                        "type": "array",
+                                        "items": {
+                                            "$ref": "#/components/schemas/studio"
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "user": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentication"
+        },
+        {
+            "name": "Anime"
+        },
+        {
+            "name": "Headlines"
+        },
+        {
+            "name": "Charts"
+        },
+        {
+            "name": "Studios"
+        },
+        {
+            "name": "Tags"
+        },
+        {
+            "name": "Users"
+        }
+    ],
+    "paths": {
+        "/auth/authenticate": {
+            "post": {
+                "description": "Recive a bearer token<br>*note: token can be passed with **every** future request, even if not needed*",
+                "tags": [
+                    "Authentication"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "description": "Recive a new bearer token",
+                "tags": [
+                    "Authentication"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "refresh_token"
+                                ],
+                                "type": "object",
+                                "properties": {
+                                    "refresh_token": {
+                                        "description": "refresh token recived in /auth/authenticate",
+                                        "type": "string",
+                                        "format": "token"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {}
+                    }
+                }
+            }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "number"
+                                        },
+                                        "username": {
+                                            "type": "string"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "format": "email"
+                                        },
+                                        "unconfirmed_email": {
+                                            "description": "* unsure of other values than 'null'",
+                                            "nullable": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/unauthorized"
+                    }
+                }
+            }
+        },
+        "/anime": {
+            "get": {
+                "description": "Query a list of anime entries",
+                "tags": [
+                    "Anime"
+                ],
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/aggrLimit"
+                    },
+                    {
+                        "$ref": "#/components/parameters/aggrOffset"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/anime"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/anime/{id}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/idLike"
+                }
+            ],
+            "get": {
+                "description": "Get info on an anime",
+                "tags": [
+                    "Anime"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/anime"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/anime/{id}/videos": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/idLike"
+                }
+            ],
+            "get": {
+                "description": "Get related videos of an anime",
+                "tags": [
+                    "Anime"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number"
+                                                    },
+                                                    "anime_id": {
+                                                        "type": "number"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "url": {
+                                                        "type": "string"
+                                                    },
+                                                    "url_host": {
+                                                        "type": "string"
+                                                    },
+                                                    "embed_url": {
+                                                        "type": "string"
+                                                    },
+                                                    "embeddable": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "video_number": {
+                                                        "type": "number",
+                                                        "nullable": true
+                                                    },
+                                                    "remote_id": {
+                                                        "type": "string"
+                                                    },
+                                                    "start_time": {
+                                                        "type": "number"
+                                                    },
+                                                    "end_time": {
+                                                        "type": "number"
+                                                    },
+                                                    "position": {
+                                                        "type": "number"
+                                                    },
+                                                    "aspect_ratio": {
+                                                        "type": "string"
+                                                    },
+                                                    "duration": {
+                                                        "type": "number"
+                                                    },
+                                                    "available_in_viewer_region": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "uploaded_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "live_start_time": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "live_end_time": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "duration_iso8601": {
+                                                        "type": "string"
+                                                    },
+                                                    "thumbnail_url": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/anime/{id}/streams": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/idLike"
+                }
+            ],
+            "get": {
+                "description": "Get the streaming locations for an anime",
+                "tags": [
+                    "Anime"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number"
+                                                    },
+                                                    "anime_id": {
+                                                        "type": "number"
+                                                    },
+                                                    "url": {
+                                                        "type": "string"
+                                                    },
+                                                    "streaming_service_id": {
+                                                        "type": "number"
+                                                    },
+                                                    "comment": {
+                                                        "type": "string"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "expires_at": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "available_in_viewer_region": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "display_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "logo": {
+                                                        "$ref": "#/components/schemas/logo"
+                                                    },
+                                                    "streaming_service_logo": {
+                                                        "type": "string"
+                                                    },
+                                                    "streaming_service_logo_large": {
+                                                        "type": "string"
+                                                    },
+                                                    "streaming_service_logo_extra_large": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/anime/{id}/next_episode": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/idLike"
+                }
+            ],
+            "get": {
+                "description": "Get info on the next episode release",
+                "tags": [
+                    "Anime"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/animeNextEpisode"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Anime doesnt have a next episode"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/headlines": {
+            "get": {
+                "description": "Get recent news headlines",
+                "tags": [
+                    "Headlines"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/aggrLimit"
+                    },
+                    {
+                        "$ref": "#/components/parameters/aggrOffset"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "has_more": {
+                                            "type": "boolean"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/headline"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/headlines/{id}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/idLike"
+                }
+            ],
+            "get": {
+                "description": "Get the info for a headline",
+                "tags": [
+                    "Headlines"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/headline"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/charts": {
+            "get": {
+                "description": "Get all available chart (season) metadata",
+                "tags": [
+                    "Charts"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/aggrLimit"
+                    },
+                    {
+                        "$ref": "#/components/parameters/aggrOffset"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "has_more": {
+                                            "type": "boolean"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/chartInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/charts/nearest": {
+            "get": {
+                "description": "get the metadata for the nearest chart (season)",
+                "tags": [
+                    "Charts"
+                ],
+                "parameters": [
+                    {
+                        "name": "fields[]",
+                        "in": "query",
+                        "explode": true,
+                        "style": "deepObject",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "next_chart",
+                                    "previous_chart"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "season",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "winter",
+                                "spring",
+                                "summer",
+                                "fall"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/chartInfo"
+                                        },
+                                        {
+                                            "description": "if `fields[]=next_chart` is given",
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/chartInfo"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "next_chart": {
+                                                            "$ref": "#/components/schemas/chartInfo"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "description": "if `fields[]=previous_chart` is given",
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/chartInfo"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "previous_chart": {
+                                                            "$ref": "#/components/schemas/chartInfo"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "description": "if `fields[]=next_chart&fields[]=previous_chart` is given",
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/chartInfo"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "next_chart": {
+                                                            "$ref": "#/components/schemas/chartInfo"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "previous_chart": {
+                                                            "$ref": "#/components/schemas/chartInfo"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/charts/{idOrSlug}": {
+            "get": {
+                "description": "get the metadata for a chart (season)",
+                "tags": [
+                    "Charts"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idOrSlug"
+                    },
+                    {
+                        "name": "fields[]",
+                        "in": "query",
+                        "explode": true,
+                        "style": "deepObject",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "next_chart",
+                                    "previous_chart"
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/chartInfo"
+                                        },
+                                        {
+                                            "description": "if `fields[]=next_chart` is given",
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/chartInfo"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "next_chart": {
+                                                            "$ref": "#/components/schemas/chartInfo"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "description": "if `fields[]=previous_chart` is given",
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/chartInfo"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "previous_chart": {
+                                                            "$ref": "#/components/schemas/chartInfo"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "description": "if `fields[]=next_chart&fields[]=previous_chart` is given",
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/components/schemas/chartInfo"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "next_chart": {
+                                                            "$ref": "#/components/schemas/chartInfo"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "previous_chart": {
+                                                            "$ref": "#/components/schemas/chartInfo"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/charts/{idOrSlug}/full_instances": {
+            "get": {
+                "description": "Get all anime for a chart (season)",
+                "tags": [
+                    "Charts"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idOrSlug"
+                    },
+                    {
+                        "name": "fields[]",
+                        "in": "query",
+                        "explode": true,
+                        "style": "deepObject",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "next_episode",
+                                    "tags",
+                                    "studios"
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "has_more": {
+                                            "type": "boolean"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/chart"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/schedule": {
+            "get": {
+                "description": "Get episode releases for a day/range",
+                "tags": [
+                    "Charts"
+                ],
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/aggrOffset"
+                    },
+                    {
+                        "$ref": "#/components/parameters/aggrLimit"
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "title",
+                                "airdate",
+                                "popularity",
+                                "modified",
+                                "countdown",
+                                "anime.avg_rating"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "hide_skipping",
+                        "in": "query",
+                        "description": "*not sure if this works, sourced from outdated docs*",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "number"
+                                        },
+                                        "number": {
+                                            "type": "number"
+                                        },
+                                        "airdate": {
+                                            "type": "string"
+                                        },
+                                        "episode_type": {
+                                            "type": "number"
+                                        },
+                                        "anime_id": {
+                                            "type": "number"
+                                        },
+                                        "created_at": {
+                                            "type": "string"
+                                        },
+                                        "updated_at": {
+                                            "type": "string"
+                                        },
+                                        "anime": {
+                                            "$ref": "#/components/schemas/anime"
+                                        },
+                                        "episode_code": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/studios": {
+            "get": {
+                "description": "Get a list of studios",
+                "tags": [
+                    "Studios"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/aggrLimit"
+                    },
+                    {
+                        "$ref": "#/components/parameters/aggrOffset"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "has_more": {
+                                            "type": "boolean"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/studio"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/studios/{id}": {
+            "get": {
+                "description": "get a studios info",
+                "tags": [
+                    "Studios"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idLike"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/studio"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/tags": {
+            "get": {
+                "description": "get a list of tags",
+                "tags": [
+                    "Tags"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "has_more": {
+                                            "type": "boolean"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/tag"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tags/{id}": {
+            "get": {
+                "description": "get a tag by id",
+                "tags": [
+                    "Tags"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idLike"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/tag"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/users/{username}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "name": "username",
+                        "required": true,
+                        "in": "path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/user"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        }
+    }
+}
