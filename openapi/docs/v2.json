@@ -2,13 +2,14 @@
     "openapi": "3.0.2",
     "info": {
         "title": "Livechart.me API",
-        "description": "unofficial documentation of the \"secret\" livechart api\n\n[github repo](https://github.com/Metro420yt/livechart.me-rest-api)",
+        "description": "unofficial documentation of the \"secret\" livechart api",
         "version": "2",
-        "x-description": "unofficial documentation of the \"secret\" livechart api",
-        "x-keywords": [
-            "livechart.me",
-            "livechart.me api"
-        ]
+        "x-metadata": {
+            "keywords": [
+                "livechart.me",
+                "livechart.me api"
+            ]
+        }
     },
     "servers": [
         {

@@ -2,13 +2,14 @@
     "openapi": "3.0.2",
     "info": {
         "title": "Livechart.me API",
-        "description": "unofficial documentation of the \"secret\" livechart api\n\n[github repo](https://github.com/infanf/livechart.me-rest-api)",
+        "description": "unofficial documentation of the \"secret\" livechart api",
         "version": "1",
-        "x-description": "unofficial documentation of the \"secret\" livechart api",
-        "x-keywords": [
-            "livechart.me",
-            "livechart.me api"
-        ]
+        "x-metadata": {
+            "keywords": [
+                "livechart.me",
+                "livechart.me api"
+            ]
+        }
     },
     "servers": [
         {
@@ -186,7 +187,8 @@
                         "type": "string"
                     },
                     "english_title": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "native_title": {
                         "type": "string"
@@ -201,19 +203,23 @@
                         "type": "string"
                     },
                     "synopsis_source": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "synopsis_source_url": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "synopsis_emended": {
                         "type": "boolean"
                     },
                     "source_material_id": {
-                        "type": "number"
+                        "type": "number",
+                        "nullable": true
                     },
                     "editor_note": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "premiere_date": {
                         "type": "string"
@@ -254,17 +260,20 @@
                         "nullable": true
                     },
                     "twitter_url": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "twitter_username": {
                         "type": "string",
                         "nullable": true
                     },
                     "promo_video_url": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "website_domain": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "has_streams": {
                         "type": "boolean"
@@ -288,7 +297,8 @@
                         "$ref": "#/components/schemas/image"
                     },
                     "episode_duration": {
-                        "type": "number"
+                        "type": "number",
+                        "nullable": true
                     },
                     "anime_type": {
                         "type": "number"
@@ -309,7 +319,8 @@
                         "$ref": "#/components/schemas/source"
                     },
                     "website_url": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "avg_rating": {
                         "type": "number"
@@ -535,8 +546,8 @@
                         "type": "string"
                     },
                     "twitter_url": {
-                        "nullable": true,
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string"
@@ -682,25 +693,37 @@
                         "type": "string"
                     },
                     "quarter": {
-                        "type": "number"
+                        "type": "number",
+                        "description": "null for tba chart",
+                        "nullable": true
                     },
                     "year": {
-                        "type": "number"
+                        "type": "number",
+                        "description": "null for tba chart",
+                        "nullable": true
                     },
                     "slug": {
                         "type": "string"
                     },
                     "start_date": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "null for tba chart",
+                        "nullable": true
                     },
                     "end_date": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "null for tba chart",
+                        "nullable": true
                     },
                     "next_chart_slug": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "null for tba chart",
+                        "nullable": true
                     },
                     "previous_chart_slug": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "null for last chart (currently Winter 1907)",
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string"
@@ -735,7 +758,8 @@
                         "type": "number"
                     },
                     "editor_note": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "premiere_date_precision_id": {
                         "type": "number"
@@ -748,21 +772,21 @@
                             {
                                 "properties": {
                                     "tags": {
-                                        "description": "added when \"tags\"included in fields[]",
+                                        "description": "added when \"tags\" included in fields[]",
                                         "type": "array",
                                         "items": {
                                             "$ref": "#/components/schemas/tag"
                                         }
                                     },
                                     "studios": {
-                                        "description": "added when \"studios\"included in fields[]",
+                                        "description": "added when \"studios\" included in fields[]",
                                         "type": "array",
                                         "items": {
                                             "$ref": "#/components/schemas/studio"
                                         }
                                     },
                                     "next_episode": {
-                                        "description": "added when \"next_episode\"included in fields[]",
+                                        "description": "added when \"next_episode\" included in fields[]",
                                         "type": "array",
                                         "items": {
                                             "$ref": "#/components/schemas/studio"
@@ -967,9 +991,17 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/anime"
+                                    "type": "object",
+                                    "properties": {
+                                        "has_more": {
+                                            "type": "boolean"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/anime"
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -1059,10 +1091,12 @@
                                                         "type": "string"
                                                     },
                                                     "start_time": {
-                                                        "type": "number"
+                                                        "type": "number",
+                                                        "nullable": true
                                                     },
                                                     "end_time": {
-                                                        "type": "number"
+                                                        "type": "number",
+                                                        "nullable": true
                                                     },
                                                     "position": {
                                                         "type": "number"
@@ -1150,7 +1184,8 @@
                                                         "type": "number"
                                                     },
                                                     "comment": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "nullable": true
                                                     },
                                                     "updated_at": {
                                                         "type": "string"
@@ -1663,32 +1698,44 @@
                                 "schema": {
                                     "type": "object",
                                     "properties": {
-                                        "id": {
-                                            "type": "number"
+                                        "has_more": {
+                                            "type": "boolean"
                                         },
-                                        "number": {
-                                            "type": "number"
-                                        },
-                                        "airdate": {
-                                            "type": "string"
-                                        },
-                                        "episode_type": {
-                                            "type": "number"
-                                        },
-                                        "anime_id": {
-                                            "type": "number"
-                                        },
-                                        "created_at": {
-                                            "type": "string"
-                                        },
-                                        "updated_at": {
-                                            "type": "string"
-                                        },
-                                        "anime": {
-                                            "$ref": "#/components/schemas/anime"
-                                        },
-                                        "episode_code": {
-                                            "type": "string"
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number"
+                                                    },
+                                                    "number": {
+                                                        "type": "number",
+                                                        "nullable": true
+                                                    },
+                                                    "airdate": {
+                                                        "type": "string"
+                                                    },
+                                                    "episode_type": {
+                                                        "type": "number"
+                                                    },
+                                                    "anime_id": {
+                                                        "type": "number"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "anime": {
+                                                        "$ref": "#/components/schemas/anime"
+                                                    },
+                                                    "episode_code": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
