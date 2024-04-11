@@ -4,6 +4,9 @@ Here you can find the list of endpoints that the livechart.me rest api has. This
 
 ![lol](https://user-images.githubusercontent.com/103996576/181138198-fb200425-50e8-425c-8178-51da98a9cacc.png)
 
+#### [SwaggerUI viewer]([https://](https://docs.yuji.app/livechart.me))
+>[Versions](openapi/docs/)
+
 
 ### Endpoints:
 -   [authentification](api/AUTHENTICATE.md)
@@ -23,10 +26,8 @@ Here you can find the list of endpoints that the livechart.me rest api has. This
 -   [nearest](api/NEAREST.md)
 -   [season_chart](api/SEASON_CHART.md)
 > 
--   [user_profile](api/USER_PROFILE.md)
+-   [authorized profile](api/ME.md)
 -   [user](api/USER.md)
-#### OpenAPI
--   [OpenAPI](openapi/OPENAPI.md)
 
 ### GraphQL
 -   [GraphQL](graphql/GRAPHQL.md)

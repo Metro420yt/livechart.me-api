@@ -1,4 +1,4 @@
-# User Profile
+# Authorized Profile
 
 #### METHOD: GET
 > The HTTP GET method requests a representation of the specified resource. [Find out more](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET)
