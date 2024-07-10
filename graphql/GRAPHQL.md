@@ -6,7 +6,7 @@
 ___
 
 #### ENDPOINT:
-` https://www.livechart.me/graphql`
+`https://www.livechart.me/graphql`
 
 ___
 

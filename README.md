@@ -1,8 +1,8 @@
-#  livechart.me-rest-api
+#  livechart.me-api
 
-Here you can find the list of endpoints that the livechart.me rest api has. This is the official API.
+Here you can find the list of endpoints for the livechart.me rest api and graphql schema
 
-![lol](https://user-images.githubusercontent.com/103996576/181138198-fb200425-50e8-425c-8178-51da98a9cacc.png)
+<a href="https://www.livechart.me/pages/faq#api"><img src="https://user-images.githubusercontent.com/103996576/181138198-fb200425-50e8-425c-8178-51da98a9cacc.png"></a>
 
 #### [SwaggerUI viewer](https://docs.yuji.app/livechart.me)
 > [Versions](openapi/docs/)
