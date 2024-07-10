@@ -191,7 +191,8 @@
                         "nullable": true
                     },
                     "native_title": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "alternate_titles": {
                         "type": "array",
@@ -483,6 +484,7 @@
             },
             "source": {
                 "type": "object",
+                "nullable": true,
                 "properties": {
                     "id": {
                         "type": "number"
@@ -596,7 +598,8 @@
                         "type": "string"
                     },
                     "sub_title": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "target_url": {
                         "type": "string"
@@ -916,7 +919,7 @@
         "/me": {
             "get": {
                 "tags": [
-                    "Users"
+                    "Authentication"
                 ],
                 "security": [
                     {
@@ -1260,73 +1263,6 @@
                 }
             }
         },
-        "/headlines": {
-            "get": {
-                "description": "Get recent news headlines",
-                "tags": [
-                    "Headlines"
-                ],
-                "parameters": [
-                    {
-                        "$ref": "#/components/parameters/aggrLimit"
-                    },
-                    {
-                        "$ref": "#/components/parameters/aggrOffset"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "has_more": {
-                                            "type": "boolean"
-                                        },
-                                        "items": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/headline"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/headlines/{id}": {
-            "parameters": [
-                {
-                    "$ref": "#/components/parameters/idLike"
-                }
-            ],
-            "get": {
-                "description": "Get the info for a headline",
-                "tags": [
-                    "Headlines"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/headline"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/invalidId"
-                    }
-                }
-            }
-        },
         "/charts": {
             "get": {
                 "description": "Get all available chart (season) metadata",
@@ -1637,6 +1573,73 @@
                 }
             }
         },
+        "/headlines": {
+            "get": {
+                "description": "Get recent news headlines",
+                "tags": [
+                    "Headlines"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/aggrLimit"
+                    },
+                    {
+                        "$ref": "#/components/parameters/aggrOffset"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "has_more": {
+                                            "type": "boolean"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/headline"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/headlines/{id}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/idLike"
+                }
+            ],
+            "get": {
+                "description": "Get the info for a headline",
+                "tags": [
+                    "Headlines"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/headline"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
         "/schedule": {
             "get": {
                 "description": "Get episode releases for a day/range",
@@ -1645,14 +1648,17 @@
                 ],
                 "parameters": [
                     {
+                        "x-#TODO": "this doesnt work, havnt found the actual value",
                         "name": "start_date",
                         "in": "query",
                         "schema": {
                             "type": "string",
-                            "format": "date"
+                            "format": "date",
+                            "pattern": "YYYY-MM-DD"
                         }
                     },
                     {
+                        "x-#TODO": "this doesnt work, havnt found the actual value",
                         "name": "end_date",
                         "in": "query",
                         "schema": {
@@ -1736,6 +1742,32 @@
                                                     }
                                                 }
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "a provided value is invalid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object",
+                                            "anyOf": [
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "start_date": {
+                                                            "type": "string",
+                                                            "example": "is invalid"
+                                                        }
+                                                    }
+                                                }
+                                            ]
                                         }
                                     }
                                 }
