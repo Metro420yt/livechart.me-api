@@ -226,7 +226,14 @@
                         "type": "string"
                     },
                     "premiere_date_precision": {
-                        "type": "number"
+                        "type": "number",
+                        "description": "- 1: season\n- 2: month\n- 3: month&time?\n- 4: date&time\nno idea if these are right",
+                        "enum": [
+                            1,
+                            2,
+                            3,
+                            4
+                        ]
                     },
                     "episode_count": {
                         "type": "number",
@@ -302,12 +309,26 @@
                         "nullable": true
                     },
                     "anime_type": {
-                        "type": "number"
+                        "type": "number",
+                        "description": "- 0: Unknown\n- 1: TV\n- 2: Movie\n- 3: OVA\n- 4: Web\n- 5: Special\n- 6: TV Short\n- 7: TV Special\n- 8: Web Short",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8
+                        ]
                     },
                     "anime_type_id": {
+                        "description": "same as anime_type?",
                         "type": "number"
                     },
                     "premiere_date_precision_id": {
+                        "description": "same as premiere_date_precision?",
                         "type": "number"
                     },
                     "poster_image": {
@@ -1131,7 +1152,11 @@
                                                         "nullable": true
                                                     },
                                                     "duration_iso8601": {
-                                                        "type": "string"
+                                                        "type": "string",
+                                                        "description": "ISO 8601 duration",
+                                                        "externalDocs": {
+                                                            "url": "https://en.wikipedia.org/wiki/ISO_8601#Durations"
+                                                        }
                                                     },
                                                     "thumbnail_url": {
                                                         "type": "string"
