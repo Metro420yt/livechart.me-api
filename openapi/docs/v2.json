@@ -2,7 +2,7 @@
     "openapi": "3.0.2",
     "info": {
         "title": "Livechart.me API",
-        "description": "unofficial documentation of the \"secret\" livechart api",
+        "description": "unofficial documentation of the \"secret\" livechart api\n\n## This version is actively being developed",
         "version": "2",
         "x-metadata": {
             "keywords": [
@@ -16,7 +16,832 @@
             "url": "https://www.livechart.me/api/v2"
         }
     ],
-    "components": {},
+    "components": {
+        "responses": {
+            "invalidId": {
+                "description": "provided id is invalid",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "example": "invalid id"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "idLike": {
+                "name": "id",
+                "required": true,
+                "in": "path",
+                "schema": {
+                    "pattern": "[0-9]+"
+                }
+            },
+            "aggrLimit": {
+                "name": "limit",
+                "in": "query",
+                "schema": {
+                    "type": "number",
+                    "maximum": 500
+                }
+            },
+            "aggrOffset": {
+                "name": "offset",
+                "in": "query",
+                "schema": {
+                    "type": "number"
+                }
+            }
+        },
+        "schemas": {
+            "anime": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/baseAnime"
+                    },
+                    {
+                        "properties": {
+                            "tags": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/tag"
+                                }
+                            },
+                            "studios": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/studio"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "baseAnime": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "romaji_title": {
+                        "type": "string"
+                    },
+                    "english_title": {
+                        "type": "string"
+                    },
+                    "native_title": {
+                        "type": "string"
+                    },
+                    "alternate_titles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "synopsis": {
+                        "type": "string"
+                    },
+                    "synopsis_source": {
+                        "type": "string"
+                    },
+                    "synopsis_source_url": {
+                        "type": "string"
+                    },
+                    "synopsis_emended": {
+                        "type": "boolean"
+                    },
+                    "source_material_id": {
+                        "type": "number"
+                    },
+                    "editor_note": {
+                        "type": "string"
+                    },
+                    "episode_count": {
+                        "type": "number",
+                        "nullable": true
+                    },
+                    "anidb_url": {
+                        "type": "string"
+                    },
+                    "mal_url": {
+                        "type": "string"
+                    },
+                    "ann_url": {
+                        "type": "string"
+                    },
+                    "anisearch_url": {
+                        "type": "string"
+                    },
+                    "twitter_url": {
+                        "type": "string"
+                    },
+                    "twitter_username": {
+                        "type": "string"
+                    },
+                    "promo_video_url": {
+                        "type": "string"
+                    },
+                    "kitsu_url": {
+                        "type": "string"
+                    },
+                    "anime_planet_url": {
+                        "type": "string"
+                    },
+                    "anilist_url": {
+                        "type": "string"
+                    },
+                    "has_streams": {
+                        "type": "boolean"
+                    },
+                    "has_videos": {
+                        "type": "boolean"
+                    },
+                    "avg_rating_tier": {
+                        "type": "number"
+                    },
+                    "rating_count": {
+                        "type": "number"
+                    },
+                    "avg_rating": {
+                        "type": "number"
+                    },
+                    "poster": {
+                        "$ref": "#/components/schemas/image"
+                    },
+                    "poster_image": {
+                        "type": "string"
+                    },
+                    "poster_image_large": {
+                        "type": "string"
+                    },
+                    "website_url": {
+                        "type": "string"
+                    },
+                    "episode_duration": {
+                        "$ref": "#/components/schemas/isoDuration"
+                    },
+                    "updated_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "premiere_date": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "premiere_date_precision": {
+                        "type": "number",
+                        "description": "- 1: season\n- 2: month\n- 3: month&time?\n- 4: date&time",
+                        "enum": [
+                            1,
+                            2,
+                            3,
+                            4
+                        ]
+                    },
+                    "premiere_date_precision_id": {
+                        "description": "same as premiere_date_precision?",
+                        "type": "number"
+                    },
+                    "anime_type": {
+                        "type": "number",
+                        "description": "- 0: Unknown\n- 1: TV\n- 2: Movie\n- 3: OVA\n- 4: Web\n- 5: Special\n- 6: TV Short\n- 7: TV Special\n- 8: Web Short",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8
+                        ]
+                    },
+                    "anime_type_id": {
+                        "description": "same as anime_type?",
+                        "type": "number"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/tag"
+                        }
+                    },
+                    "studios": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/studio"
+                        }
+                    },
+                    "source_material": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "number"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "updated_at": {
+                                "$ref": "#/components/schemas/dateTime"
+                            },
+                            "created_at": {
+                                "$ref": "#/components/schemas/dateTime"
+                            }
+                        }
+                    }
+                }
+            },
+            "animeNextEpisode": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "anime_id": {
+                        "type": "number"
+                    },
+                    "number": {
+                        "type": "number"
+                    },
+                    "airdate": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "episode_type": {
+                        "type": "number",
+                        "enum": [
+                            "regular"
+                        ]
+                    },
+                    "episode_type_id": {
+                        "nullable": true,
+                        "type": "number"
+                    },
+                    "episode_code": {
+                        "type": "string",
+                        "description": "Shown in livechart countdowns<br>`{episode_type}{number}`"
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "updated_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    }
+                }
+            },
+            "image": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "url_template": {
+                        "type": "string"
+                    },
+                    "cache_namespace": {
+                        "type": "string"
+                    },
+                    "style_names": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "small",
+                                "large"
+                            ]
+                        }
+                    },
+                    "styles": {
+                        "type": "object",
+                        "properties": {
+                            "small": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "width": {
+                                        "type": "number"
+                                    },
+                                    "height": {
+                                        "type": "number"
+                                    },
+                                    "formats": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "jpg",
+                                                "webp",
+                                                "png"
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "large": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "width": {
+                                        "type": "number"
+                                    },
+                                    "height": {
+                                        "type": "number"
+                                    },
+                                    "formats": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "enum": [
+                                                "jpg",
+                                                "webp",
+                                                "png"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "tag": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "hidden": {
+                        "type": "boolean"
+                    },
+                    "updated_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    }
+                }
+            },
+            "studio": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "twitter_username": {
+                        "type": "string"
+                    },
+                    "website_url": {
+                        "type": "string"
+                    },
+                    "website_label": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "facebook_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "youtube_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "mal_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "anidb_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "ann_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "anisearch_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "anime_planet_url": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "twitter_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "updated_at": {
+                        "$ref": "#/components/schemas/dateTime"
+                    },
+                    "founded_date": {
+                        "$ref": "#/components/schemas/nullableDateTime"
+                    },
+                    "founded_date_precision": {
+                        "type": "number"
+                    },
+                    "founded_date_precision_id": {
+                        "type": "number"
+                    },
+                    "defunct_date": {
+                        "$ref": "#/components/schemas/nullableDateTime"
+                    },
+                    "defunct_date_precision": {
+                        "type": "number"
+                    },
+                    "defunct_date_precision_id": {
+                        "type": "number"
+                    },
+                    "logo": {
+                        "$ref": "#/components/schemas/logo"
+                    },
+                    "logo_small": {
+                        "type": "string"
+                    },
+                    "logo_large": {
+                        "type": "string"
+                    }
+                }
+            },
+            "logo": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/image"
+                    },
+                    {
+                        "properties": {
+                            "style_names": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": [
+                                        "medium"
+                                    ]
+                                }
+                            },
+                            "styles": {
+                                "type": "object",
+                                "properties": {
+                                    "medium": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "width": {
+                                                "type": "number"
+                                            },
+                                            "height": {
+                                                "type": "number"
+                                            },
+                                            "formats": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "jpg",
+                                                        "webp",
+                                                        "png"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "isoDuration": {
+                "description": "ISO 8601 duration",
+                "type": "string",
+                "externalDocs": {
+                    "url": "https://en.wikipedia.org/wiki/ISO_8601#Durations"
+                }
+            },
+            "dateTime": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "nullableDateTime": {
+                "allOf": [
+                    {
+                        "nullable": true
+                    },
+                    {
+                        "$ref": "#/components/schemas/dateTime"
+                    }
+                ]
+            }
+        }
+    },
     "tags": [],
-    "paths": {}
+    "paths": {
+        "/anime/{id}": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/idLike"
+                }
+            ],
+            "get": {
+                "description": "Get info on an anime",
+                "tags": [
+                    "Anime"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/anime"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/anime/{id}/videos": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/idLike"
+                }
+            ],
+            "get": {
+                "description": "Get related videos of an anime",
+                "tags": [
+                    "Anime"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number"
+                                                    },
+                                                    "anime_id": {
+                                                        "type": "number"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "video_number": {
+                                                        "type": "number",
+                                                        "nullable": true,
+                                                        "enum": [
+                                                            1,
+                                                            2
+                                                        ]
+                                                    },
+                                                    "start_time": {
+                                                        "type": "number",
+                                                        "nullable": true
+                                                    },
+                                                    "end_time": {
+                                                        "type": "number",
+                                                        "nullable": true
+                                                    },
+                                                    "position": {
+                                                        "type": "number"
+                                                    },
+                                                    "url": {
+                                                        "type": "string"
+                                                    },
+                                                    "embed_url": {
+                                                        "type": "string"
+                                                    },
+                                                    "updated_at": {
+                                                        "$ref": "#/components/schemas/dateTime"
+                                                    },
+                                                    "created_at": {
+                                                        "$ref": "#/components/schemas/dateTime"
+                                                    },
+                                                    "video_type": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "video_type_id": {
+                                                        "type": "number",
+                                                        "nullable": true
+                                                    },
+                                                    "video": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "number"
+                                                            },
+                                                            "title": {
+                                                                "type": "string"
+                                                            },
+                                                            "url": {
+                                                                "type": "string"
+                                                            },
+                                                            "url_host": {
+                                                                "type": "string"
+                                                            },
+                                                            "embed_url": {
+                                                                "type": "string"
+                                                            },
+                                                            "embeddable": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "remote_id": {
+                                                                "type": "string"
+                                                            },
+                                                            "aspect_ratio": {
+                                                                "type": "string"
+                                                            },
+                                                            "available_in_viewer_region": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "duration": {
+                                                                "type": "string"
+                                                            },
+                                                            "updated_at": {
+                                                                "$ref": "#/components/schemas/dateTime"
+                                                            },
+                                                            "created_at": {
+                                                                "$ref": "#/components/schemas/dateTime"
+                                                            },
+                                                            "uploaded_at": {
+                                                                "$ref": "#/components/schemas/dateTime"
+                                                            },
+                                                            "live_start_time": {
+                                                                "$ref": "#/components/schemas/nullableDateTime"
+                                                            },
+                                                            "live_end_time": {
+                                                                "$ref": "#/components/schemas/nullableDateTime"
+                                                            },
+                                                            "video_provider": {
+                                                                "type": "string"
+                                                            },
+                                                            "video_provider_id": {
+                                                                "type": "number"
+                                                            },
+                                                            "thumbnail_url": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/anime/{id}/streams": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/idLike"
+                }
+            ],
+            "get": {
+                "description": "Get the streaming locations for an anime",
+                "tags": [
+                    "Anime"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number"
+                                                    },
+                                                    "anime_id": {
+                                                        "type": "number"
+                                                    },
+                                                    "url": {
+                                                        "type": "string"
+                                                    },
+                                                    "streaming_service_id": {
+                                                        "type": "number"
+                                                    },
+                                                    "comment": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "expires_at": {
+                                                        "$ref": "#/components/schemas/nullableDateTime"
+                                                    },
+                                                    "available_in_viewer_region": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "display_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "logo": {
+                                                        "$ref": "#/components/schemas/logo"
+                                                    },
+                                                    "streaming_service_logo": {
+                                                        "type": "string"
+                                                    },
+                                                    "streaming_service_logo_large": {
+                                                        "type": "string"
+                                                    },
+                                                    "streaming_service_logo_extra_large": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        },
+        "/anime/{id}/next_episode": {
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/idLike"
+                }
+            ],
+            "get": {
+                "description": "Get info on the next episode release",
+                "tags": [
+                    "Anime"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/animeNextEpisode"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "Anime doesnt have a next episode"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/invalidId"
+                    }
+                }
+            }
+        }
+    }
 }
