@@ -11,6 +11,7 @@ type Query {
 
     anime(term: String!): AnimeConnection
     schedule(date: ISO8601Date!): ScheduleListings
+    releaseSchedule(animeId: ID!, id: ID!): AnimeReleaseSchedule
 
     user(username: String!): PublicUser
 
@@ -42,6 +43,8 @@ type Anime {
     englishTitle: String
     nativeTitle: String
     alternativeTitles: [String]
+    format: animeFormat
+    originalLanguageCodes: [String]
 
     poster: OnTheFlyImage
     synopsis: AnimeSynopsis
@@ -97,15 +100,13 @@ type AnimeSynopsis {
 type MarkdownText {
     markdown: String
 }
-
 type ShallowTag {
     id: ID
     name: String
     hidden: String
-    created_at: String
-    updated_at: String
+    createdAt: String
+    updatedAt: String
 }
-
 type ShallowStudio {
     id: ID!
     name: String
@@ -119,12 +120,10 @@ type ShallowStudio {
     defunctDate: DateWithPrecision
     logo: OnTheFlyImage
 }
-
 type AggregateRating {
     count: Int
     weightedValue: Float
 }
-
 type ShallowEpisode {
     id: String
     number: Int
@@ -132,38 +131,128 @@ type ShallowEpisode {
     airdate: ISO8601DateTime
 }
 
+#
+# --- Release Schedule ---
 type AnimeReleaseScheduleConnection {
     nodes: [AnimeReleaseSchedule]
 }
 type AnimeReleaseSchedule {
+    animeId: String
     id: String
     title: String
+    shortTitle: String
+    description: MarkdownText
+
+    releaseState: ReleaseScheduleState
     tracks: [ReleaseScheduleTrack]
     action: WebLink
+
+    networkDatabaseId: String
+    network: AnimeReleaseNetwork
+    includeNetworkInShortTitle: Boolean
+
     startDate: DateTimeWithPrecision
     endDate: DateTimeWithPrecision
+    createdAt: ISO8601DateTime
+    updatedAt: ISO8601DateTime
 
-    viewerNotificationsPreference: Boolean! # Authed (default: false)
-    pinnedByViewer: Boolean # Authed
+    # Authed
+    pinned: Boolean
+    viewerNotificationsPreference: Boolean! # (default: false)
+    pinnedByViewer: Boolean
+    applicableToViewer: Boolean
+    defaultForViewer: Boolean
+}
+type ReleaseScheduleState {
+    id: number
+    databaseId: String
+    animeDatabaseId: String
+    releaseScheduleDatabaseId: String
+    schedulingNote: SchedulingNote
+
+    networkName: String
+    networkShortName: String
+    includeNetworkInShortTitle: Boolean
+
+    scheduleTitle: String
+    scheduleShortTitle: String
+
+    releaseStatus: releaseStatusType
+    previousRelease: EpisodeRange
+    nextRelease: EpisodeRange
+    nextReleasePlaceholder: EpisodeRangePlaceholder
+
+    updatedAt: ISO8601DateTime
+}
+type SchedulingNote {
+    id: String
+    animeId: String
+    releaseScheduleId: String
+
+    sentiment: schedulingNoteSentiment
+    gist: String
+    message: MarkdownText
+    action: WebLink
+
+    releaseDate: ISO8601DateTime
+    timeIsApproximate: Boolean
+
+    createdAt: ISO8601DateTime
+    updatedAt: ISO8601DateTime
+}
+type AnimeReleaseNetwork {
+    databaseId: String
+    name: String
+    shortName: String
+    accentColorOnLight: Color
+    accentColorOnDark: Color
+    updatedAt: ISO8601DateTime
 }
 type ReleaseScheduleTrack {
     id: String # json string "[{scheduleId}, {langId}, {type}]"
     type: MediaTrackType
     language: Language
+    languageCode: String
+    shortLabel: String
+    category: String
 }
 type Language {
     id: String
     code: String
+    name: String
+    nativeName: String
+    shortName: String
 }
 enum MediaTrackType {
     SUBTITLES
     AUDIO
 }
 
-type WebLink {
-    url: String #err 500 when discovering
+#
+# --- Schedule Episodes ---
+type EpisodeRange {
+    numberRange: EpisodeNumberRange
+    date: ISO8601DateTime
+    timeIsApproximate: Boolean
+}
+type EpisodeNumberRange {
+    minNumber: Int
+    minReleaseNumber: Int
+    size: Int
+    label: String
+    lastOfAnime: Boolean
+    lastOfSchedule: Boolean
+}
+type EpisodeRangePlaceholder {
+    NumberRange: EpisodeNumberRange
+    value: EpisodeRangePlaceholderValue
 }
 
+type WebLink { #err 500 when discovering
+    url: String
+    labelText: String
+    iconMaskUrl: String
+}
 type SourceMaterial {
     id: String
     name: String
@@ -174,10 +263,12 @@ type SourceMaterial {
 type AnimeVideoConnection {
     nodes: [AnimeVideo]
 }
-type AnimeVideo {
+type AnimeVideo { #TODO: find other keys
     title: String
 }
 
+#
+# --- Schedule/Timetable ---
 # type ScheduleListings{ #TODO
 
 # }
@@ -280,13 +371,56 @@ type DateWithPrecision {
     precision: DatePrecision
 }
 
+type ApproximateReleaseMessage { #TODO: check if valid
+    body: String
+}
+type ReleaseSeason { #TODO: check if valid
+    title: String
+    slug: String
+    # yearQuarter:
+    startDate: ISO8601DateTime
+    endDate: ISO8601DateTime
+}
 #
 # --- Enums +Misc ---
 union ID = String | Int
+union EpisodeRangePlaceholderValue =
+      ApproximateReleaseMessage
+    | ReleaseSeason
+    | DateWithPrecision
+    | DateTimeWithPrecision
 
-# enum LibraryEntrySort { #TODO
-#   no fucking idea what these are, ive tried so many
-# }
+type LibraryEntrySort {
+    algorithm: LibraryEntrySortingAlgorithm!
+    direction: OrderDirection
+}
+
+enum LibraryEntrySortingAlgorithm { #TODO: check if valid
+    # POPULARITY
+    NEXT_EPISODE_COUNTDOWN
+    # AVERAGE_RATING
+    # DATE
+    # ANIME_UPDATED_AT
+    # ANIME_TITLE
+}
+enum OrderDirection {
+    ASC
+    DESC
+}
+enum animeFormat { #TODO: check if valid
+    # Unknown
+    TV
+    # Movie
+    # OVA
+    # Web
+    # Special
+    # TV Short
+    # TV Special
+    # Web Short
+}
+enum schedulingNoteSentiment { #TODO: find other values?
+    NEGATIVE
+}
 enum releaseStatusType {
     NOT_YET_RELEASED
     RELEASING
