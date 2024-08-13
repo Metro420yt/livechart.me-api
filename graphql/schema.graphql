@@ -6,17 +6,20 @@ schema {
 }
 
 type Query {
-    singleAnime(id: ID!): Anime
-    franchise(id: ID!): Franchise
-
     anime(term: String!): AnimeConnection
-    schedule(date: ISO8601Date!): ScheduleListings
+    singleAnime(id: ID!): Anime
     releaseSchedule(animeId: ID!, id: ID!): AnimeReleaseSchedule
+
+    schedule(date: ISO8601Date!): ScheduleListings
+
+    franchise(id: ID!): Franchise
+    headlines: HeadlineConnection
 
     user(username: String!): PublicUser
 
     viewer: Viewer # Authed
     notificationCategories: NotificationCategory # Authed
+    notifications: NotificationConnection # Authed
 }
 
 type Mutation { # Authed (obv)
@@ -24,10 +27,13 @@ type Mutation { # Authed (obv)
         animeId: ID!
         attributes: LibraryEntryAttributes!
         ratingScale: RatingScale
-    ): Boolean
+    ): LibraryEntryUpsertResult
 
-    unfavorite(id: ID!): RemoveFavoriteResult #TODO
-    favorite(id: ID!): AddFavoriteResult #TODO
+    #unfavorite(id: ID!): RemoveFavoriteResult #TODO
+    #favorite(id: ID!): AddFavoriteResult #TODO
+}
+type LibraryEntryUpsertResult {
+    libraryEntry: ViewerLibraryEntry
 }
 
 #
@@ -87,7 +93,7 @@ type Style {
     name: String
     height: Int
     width: Int
-    formats: [StyleFormats] #TODO
+    #formats: [StyleFormats] #TODO
 }
 
 type AnimeSynopsis {
@@ -104,8 +110,8 @@ type ShallowTag {
     id: ID
     name: String
     hidden: String
-    createdAt: String
-    updatedAt: String
+    createdAt: ISO8601DateTime
+    updatedAt: ISO8601DateTime
 }
 type ShallowStudio {
     id: ID!
@@ -164,7 +170,7 @@ type AnimeReleaseSchedule {
     defaultForViewer: Boolean
 }
 type ReleaseScheduleState {
-    id: number
+    id: Int
     databaseId: String
     animeDatabaseId: String
     releaseScheduleDatabaseId: String
@@ -204,8 +210,8 @@ type AnimeReleaseNetwork {
     databaseId: String
     name: String
     shortName: String
-    accentColorOnLight: Color
-    accentColorOnDark: Color
+    #accentColorOnLight: Color
+    #accentColorOnDark: Color
     updatedAt: ISO8601DateTime
 }
 type ReleaseScheduleTrack {
@@ -269,9 +275,9 @@ type AnimeVideo { #TODO: find other keys
 
 #
 # --- Schedule/Timetable ---
-# type ScheduleListings{ #TODO
-
-# }
+type ScheduleListings { #TODO
+    __typename: String
+}
 
 #
 # --- Franchise ---
@@ -290,13 +296,25 @@ type FranchiseInstallment {
 }
 
 #
-# --- Headlines ---
+# --- Headlines --- #TODO
 type HeadlineConnection {
     nodes: Headline
 }
-# type Headline { #TODO
-#
-# }
+type Headline {
+    id: String
+    title: String
+    subTitle: String
+    thumbnail: OnTheFlyImage
+
+    targetHost: String
+    targetUrl: String
+
+    sponsored: Boolean
+    edited: Boolean
+    pinned: Boolean # errored
+    updatedAt: String
+    createdAt: ISO8601DateTime
+}
 
 #
 # --- User Info ---
@@ -310,19 +328,13 @@ type Viewer {
     library: ViewerLibraryEntryConnection
     notificationMetadata: UserNotificationMetadata
 }
-type UserNotificationMetadata {
-    unreadCount: Int
-}
-type NotificationCategory {
-    databaseId: String
-    viewerUnreadCount: Int
-}
 type ViewerLibraryEntryConnection {
     nodes: [ViewerLibraryEntry]
 }
 type ViewerLibraryEntry {
     id: String!
     animeId: String
+    animeDatabaseId: String
     status: LibraryEntryStatus!
     episodesWatched: Int!
     rewatches: Int!
@@ -359,6 +371,8 @@ type PublicLibraryEntry {
     rating: Float
     episodesWatched: Int
     anime: Anime
+    updatedAt: ISO8601DateTime
+    createdAt: ISO8601DateTime
 }
 
 #
@@ -381,6 +395,34 @@ type ReleaseSeason { #TODO: check if valid
     startDate: ISO8601DateTime
     endDate: ISO8601DateTime
 }
+
+#
+# --- Notifications ---
+type UserNotificationMetadata {
+    unreadCount: Int
+}
+type NotificationCategory {
+    databaseId: String
+    id: String
+    name: String
+    displayName: String
+
+    viewerUnreadCount: Int
+}
+type NotificationConnection {
+    nodes: [Notification]
+}
+type Notification { #TODO: find key for notification title
+    id: String
+    createdAt: ISO8601DateTime
+    status: NotificationMarkStatus
+    category: NotificationCategory
+}
+enum NotificationMarkStatus {
+    UNREAD
+    READ
+}
+
 #
 # --- Enums +Misc ---
 union ID = String | Int
@@ -395,13 +437,11 @@ type LibraryEntrySort {
     direction: OrderDirection
 }
 
-enum LibraryEntrySortingAlgorithm { #TODO: check if valid
-    # POPULARITY
+enum LibraryEntrySortingAlgorithm { #TODO: find others
     NEXT_EPISODE_COUNTDOWN
-    # AVERAGE_RATING
-    # DATE
-    # ANIME_UPDATED_AT
-    # ANIME_TITLE
+    AVERAGE_RATING
+    ANIME_TITLE
+    UPDATED_AT
 }
 enum OrderDirection {
     ASC
