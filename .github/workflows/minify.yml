@@ -1,0 +1,22 @@
+name: Minify
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+    - openapi/docs/**
+
+jobs:
+  minify:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm run build
+      - uses: EndBug/add-and-commit@v9
+        with:
+          default_author: github_actions
+          message: 'Minify openapi version(s)'
