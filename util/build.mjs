@@ -31,8 +31,10 @@ for (const v of versions) {
     const data = versionData[v]
     if (!data) continue;
 
-
     const res = await fetch(`https://api.github.com/repos/${repo}/commits?path=/openapi/docs/${v}`)
+    const authors = JSON.parse(readFileSync(authorsCachePath, 'utf8'))
+    if (!authors[v]) authors[v] = []
+
     if (res.status === 200) for (const { author } of await res.json()) {
         if (authors[v].find(a => a.id === author.id)) continue;
         console.log('new contributor', author.login)
@@ -40,8 +42,6 @@ for (const v of versions) {
     }
     else console.log(res.status, res.url)
 
-    const authors = JSON.parse(readFileSync(authorsCachePath, 'utf8'))
-    if (!authors[v]) authors[v] = []
 
     data.info.description += `<br>[Source Code](${remoteUrl[1]})\n\n## Contributors\n` + authors[v].map((author) => `[${author.login}](${author.html_url})`).join('<br>')
 
