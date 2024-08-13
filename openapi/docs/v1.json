@@ -227,7 +227,7 @@
                     },
                     "premiere_date_precision": {
                         "type": "number",
-                        "description": "- 1: season\n- 2: month\n- 3: month&time?\n- 4: date&time\nno idea if these are right",
+                        "description": "- 1: year/year&season (year if date is jan 1st)\n- 2: month\n- 3: date\n- 4: date&time",
                         "enum": [
                             1,
                             2,
