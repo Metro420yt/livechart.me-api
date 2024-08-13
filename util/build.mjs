@@ -23,8 +23,9 @@ if (versions.length > 0) var versionsStr = versions.map(v => `[v${versionData[v]
 var repo = process.env.GITHUB_REPOSITORY
 var remoteUrl = `https://github.com/${repo}`
 if (!repo) { // get the user&repo from remote url
-    const remoteUrl = execSync('git remote get-url origin', { encoding: 'utf8' }).match(/(.*github.com\/(.*)\/(.*)).git/)
+    remoteUrl = execSync('git remote get-url origin', { encoding: 'utf8' }).match(/(.*github.com\/(.*)\/(.*)).git/)
     repo = `${remoteUrl[2]}/${remoteUrl[3]}`
+    remoteUrl = remoteUrl[1]
 }
 
 for (const v of versions) {
@@ -43,7 +44,7 @@ for (const v of versions) {
     else console.log(res.status, res.url)
 
 
-    data.info.description += `<br>[Source Code](${remoteUrl[1]})\n\n## Contributors\n` + authors[v].map((author) => `[${author.login}](${author.html_url})`).join('<br>')
+    data.info.description += `<br>[Source Code](${remoteUrl})\n\n## Contributors\n` + authors[v].map((author) => `[${author.login}](${author.html_url})`).join('<br>')
 
     if (versionsStr) data.info.description += `\n\n## Versions\n${versionsStr}`
 
