@@ -1,3 +1,5 @@
+> [!NOTE]
+> Split from [infanf/livechart.me-rest-api](https://github.com/infanf/livechart.me-rest-api)
 #  livechart.me-api
 
 Here you can find the list of endpoints for the livechart.me rest api and graphql schema
